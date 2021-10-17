@@ -1,66 +1,66 @@
--- Zadanie opartê o bibliotekê library
+-- Zadanie opartÄ™ o bibliotekÄ™ library
 
---1. Napisz polecenie select, za pomoc¹ którego uzyskasz tytu³ i numer ksi¹¿ki
+--1. Napisz polecenie select, za pomocÄ… ktÃ³rego uzyskasz tytuÅ‚ i numer ksiÄ…Å¼ki
 SELECT title_no, title FROM title
 
--- 2. Napisz polecenie, które wybiera tytu³ o numerze 10
+-- 2. Napisz polecenie, ktÃ³re wybiera tytuÅ‚ o numerze 10
 SELECT title From title WHERE title_no = 10
 
--- 3. Napisz polecenie, które wybiera numer czytelnika i karê
--- dla tych czytelników, którzy maj¹ kary miêdzy $8 a $9 
+-- 3. Napisz polecenie, ktÃ³re wybiera numer czytelnika i karÄ™
+-- dla tych czytelnikÃ³w, ktÃ³rzy majÄ… kary miÄ™dzy $8 a $9 
 SELECT member_no,fine_assessed FROM loanhist WHERE fine_assessed BETWEEN 8 AND 9
 
--- 4. Napisz polecenie select, za pomoc¹ którego uzyskasz
--- numer ksi¹¿ki i autora dla wszystkich ksi¹¿ek, których
+-- 4. Napisz polecenie select, za pomocÄ… ktÃ³rego uzyskasz
+-- numer ksiÄ…Å¼ki i autora dla wszystkich ksiÄ…Å¼ek, ktÃ³rych
 -- autorem jest Charles Dickens lub Jane Austen
 SELECT title_no FROM title WHERE ( author = 'Charles Dickens' OR  author = 'Jane Austen')
 
--- 5. Napisz polecenie, które wybiera numer tytu³u i tytu³ dla
--- wszystkich rekordów zawieraj¹cych string „adventures” gdzieœ w tytule
+-- 5. Napisz polecenie, ktÃ³re wybiera numer tytuÅ‚u i tytuÅ‚ dla
+-- wszystkich rekordÃ³w zawierajÄ…cych string â€adventuresâ€ gdzieÅ› w tytule
 SELECT title_no, title FROM title WHERE title LIKE '%adventures%'
 
--- 6. Napisz polecenie, które wybiera numer czytelnika, karê
--- oraz zap³acon¹ karê dla wszystkich, którzy jeszcze nie zap³acili.
+-- 6. Napisz polecenie, ktÃ³re wybiera numer czytelnika, karÄ™
+-- oraz zapÅ‚aconÄ… karÄ™ dla wszystkich, ktÃ³rzy jeszcze nie zapÅ‚acili.
 SELECT member_no, fine_assessed, fine_paid FROM loanhist 
 WHERE (fine_assessed > fine_paid AND fine_waived IS NULL) 
 OR (fine_waived IS NOT NULL AND fine_assessed > fine_paid+fine_waived)
 
--- 7. Napisz polecenie, które wybiera wszystkie unikalne pary
--- miast i stanów z tablicy adult
+-- 7. Napisz polecenie, ktÃ³re wybiera wszystkie unikalne pary
+-- miast i stanÃ³w z tablicy adult
 SELECT DISTINCT city, state FROM adult
 
--- 8. Napisz polecenie, które wybiera wszystkie tytu³y z tablicy
--- title i wyœwietla je w porz¹dku alfabetycznym.
+-- 8. Napisz polecenie, ktÃ³re wybiera wszystkie tytuÅ‚y z tablicy
+-- title i wyÅ›wietla je w porzÄ…dku alfabetycznym.
 SELECT title FROM title ORDER BY title
 
--- 9. Napisz polecenie, które:
--- - wybiera numer cz³onka biblioteki, isbn ksi¹¿ki i wartoœæ
--- naliczonej kary dla wszystkich wypo¿yczeñ, dla których naliczono karê
--- - stwórz kolumnê wyliczeniow¹ zawieraj¹c¹ podwojon¹ wartoœæ kolumny fine_assessed
--- - stwórz alias ‘double fine’ dla tej kolumny
+-- 9. Napisz polecenie, ktÃ³re:
+-- - wybiera numer czÅ‚onka biblioteki, isbn ksiÄ…Å¼ki i wartoÅ›Ä‡
+-- naliczonej kary dla wszystkich wypoÅ¼yczeÅ„, dla ktÃ³rych naliczono karÄ™
+-- - stwÃ³rz kolumnÄ™ wyliczeniowÄ… zawierajÄ…cÄ… podwojonÄ… wartoÅ›Ä‡ kolumny fine_assessed
+-- - stwÃ³rz alias â€˜double fineâ€™ dla tej kolumny
 SELECT member_no, isbn, fine_assessed, fine_assessed*2 as 'double fine' FROM loanhist WHERE fine_assessed IS NOT NULL AND fine_assessed > 0
 
 
--- 10. Napisz polecenie, które:
+-- 10. Napisz polecenie, ktÃ³re:
 -- a)
--- - generuje pojedyncz¹ kolumnê, która zawiera kolumny:
--- imiê cz³onka biblioteki, inicja³ drugiego imienia i nazwisko dla wszystkich cz³onków biblioteki,
--- którzy nazywaj¹ siê Anderson
--- - nazwij tak powsta³¹ kolumnê „email_name”
--- - zmodyfikuj polecenie, tak by zwróci³o „listê proponowanych loginów e -mail” utworzonych przez po³¹czenie imienia cz³onka
--- biblioteki, z inicja³em drugiego imienia i pierwszymi dwoma literami nazwiska (wszystko ma³ymi literami).
+-- - generuje pojedynczÄ… kolumnÄ™, ktÃ³ra zawiera kolumny:
+-- imiÄ™ czÅ‚onka biblioteki, inicjaÅ‚ drugiego imienia i nazwisko dla wszystkich czÅ‚onkÃ³w biblioteki,
+-- ktÃ³rzy nazywajÄ… siÄ™ Anderson
+-- - nazwij tak powstaÅ‚Ä… kolumnÄ™ â€email_nameâ€
+-- - zmodyfikuj polecenie, tak by zwrÃ³ciÅ‚o â€listÄ™ proponowanych loginÃ³w e -mailâ€ utworzonych przez poÅ‚Ä…czenie imienia czÅ‚onka
+-- biblioteki, z inicjaÅ‚em drugiego imienia i pierwszymi dwoma literami nazwiska (wszystko maÅ‚ymi literami).
 SELECT firstname + '.' + middleinitial + '.' + lastname as 'email_name' FROM MEMBER WHERE lastname LIKE 'Anderson'
 -- b)
--- - zmodyfikuj polecenie, tak by zwróci³o „listê proponowanych loginów e -mail” utworzonych przez po³¹czenie imienia cz³onka
--- biblioteki, z inicja³em drugiego imienia i pierwszymi dwoma literami nazwiska (wszystko ma³ymi literami).
+-- - zmodyfikuj polecenie, tak by zwrÃ³ciÅ‚o â€listÄ™ proponowanych loginÃ³w e -mailâ€ utworzonych przez poÅ‚Ä…czenie imienia czÅ‚onka
+-- biblioteki, z inicjaÅ‚em drugiego imienia i pierwszymi dwoma literami nazwiska (wszystko maÅ‚ymi literami).
 SELECT LOWER(firstname + middleinitial + SUBSTRING(lastname, 1, 2)) as 'demo_e-mail' FROM member WHERE lastname like 'Anderson'
 
--- 11. Napisz polecenie, które wybiera title i title_no z tablicy title.
--- Wynikiem powinna byæ pojedyncza kolumna o formacie jak w przyk³adzie poni¿ej:
+-- 11. Napisz polecenie, ktÃ³re wybiera title i title_no z tablicy title.
+-- Wynikiem powinna byÄ‡ pojedyncza kolumna o formacie jak w przykÅ‚adzie poniÅ¼ej:
 -- The title is: Poems, title number 7
--- Czyli zapytanie powinno zwracaæ pojedyncz¹ kolumnê w oparciu o wyra¿enie, które ³¹czy 4 elementy:
--- sta³a znakowa ‘The title is:’
--- wartoœæ kolumny title
--- sta³a znakowa ‘title number’
--- wartoœæ kolumny title_no
+-- Czyli zapytanie powinno zwracaÄ‡ pojedynczÄ… kolumnÄ™ w oparciu o wyraÅ¼enie, ktÃ³re Å‚Ä…czy 4 elementy:
+-- staÅ‚a znakowa â€˜The title is:â€™
+-- wartoÅ›Ä‡ kolumny title
+-- staÅ‚a znakowa â€˜title numberâ€™
+-- wartoÅ›Ä‡ kolumny title_no
 SELECT 'The title is : ' + title + ', title number ' + CAST(title_no as varchar) as 'titleinfo' FROM title
