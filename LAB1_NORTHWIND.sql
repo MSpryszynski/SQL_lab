@@ -26,7 +26,7 @@ SELECT CompanyName, Address, City, Country FROM Customers WHERE City = 'London'
 -- 2. Wybierz nazwy i adresy wszystkich klientów maj¹cych siedziby we Francji lub w Hiszpanii
 SELECT CompanyName, Address, City, Country FROM Customers WHERE Country = 'France' OR Country = 'Spain'
 
--- 3. Wybierz nazwy i ceny produktów o cenie jednostkowej pomiêdzy 20 a 30SELECT ProductName, UnitPrice FROM Products WHERE UnitPrice BETWEEN 20 AND 30 
+-- 3. Wybierz nazwy i ceny produktów o cenie jednostkowej pomiêdzy 20 a 30SELECT ProductName, UnitPrice FROM Products WHERE UnitPrice BETWEEN 20 AND 30
 
 -- 4. Wybierz nazwy i ceny produktów z kategorii ‘meat’SELECT ProductName, UnitPrice FROM Products WHERE CategoryID IN (SELECT CategoryID FROM Categories 
 WHERE CategoryName LIKE '%meat%')
