@@ -22,8 +22,7 @@ SELECT title_no, title FROM title WHERE title LIKE '%adventures%'
 -- 6. Napisz polecenie, które wybiera numer czytelnika, karę
 -- oraz zapłaconą karę dla wszystkich, którzy jeszcze nie zapłacili.
 SELECT member_no, fine_assessed, fine_paid FROM loanhist 
-WHERE (fine_assessed > fine_paid AND fine_waived IS NULL) 
-OR (fine_waived IS NOT NULL AND fine_assessed > fine_paid+fine_waived)
+WHERE (fine_assessed > fine_paid+ ISNull(fine_waived, 0)
 
 -- 7. Napisz polecenie, które wybiera wszystkie unikalne pary
 -- miast i stanów z tablicy adult
