@@ -14,7 +14,9 @@ FROM Products WHERE QuantityPerUnit LIKE '%bottle%'
 SELECT * FROM Products WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products)
 
 -- 5. Podaj wartość zamówienia o numerze 10250
-SELECT * FROM [Order Details] WHERE OrderID = 10250
+SELECT SUM(UnitPrice * Quantity * (1 - Discount)) FROM [Order Details]
+WHERE OrderID = 10250
+
 
 --Zastosowania GROUP BY
 
