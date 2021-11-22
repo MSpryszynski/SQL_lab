@@ -1,0 +1,253 @@
+--1. Wybierz nazwy i ceny produktów (baza northwind) o cenie jednostkowej
+--pomiêdzy 20.00 a 30.00, dla ka¿dego produktu podaj dane adresowe dostawcy
+SELECT ProductName, UnitPrice, Suppliers.Address FROM Products
+INNER JOIN Suppliers
+ON Products.SupplierID = Suppliers.SupplierID
+WHERE UnitPrice BETWEEN 20 AND 30
+
+
+--2. Wybierz nazwy produktów oraz inf. o stanie magazynu dla produktów
+--dostarczanych przez firmê ‘Tokyo Traders’
+SELECT ProductName, UnitsInStock, Suppliers.CompanyName FROM Products
+INNER JOIN Suppliers
+ON Products.SupplierID = Suppliers.SupplierID
+WHERE Suppliers.CompanyName = 'Tokyo Traders'
+
+
+--3. Czy s¹ jacyœ klienci którzy nie z³o¿yli ¿adnego zamówienia w 1997 roku, jeœli tak
+--to poka¿ ich dane adresowe
+SELECT Address + ' ' + City FROM Customers
+LEFT OUTER JOIN Orders
+ON Customers.CustomerID = Orders.CustomerID AND YEAR(OrderDate) = 1997
+WHERE YEAR(OrderDate) IS NULL
+
+
+--4. Wybierz nazwy i numery telefonów dostawców, dostarczaj¹cych produkty,
+--których aktualnie nie ma w magazynie
+SELECT CompanyName, Phone FROM Suppliers
+INNER JOIN Products
+ON Suppliers.SupplierID = Products.SupplierID
+WHERE UnitsInStock = 0
+
+
+--5. Wybierz nazwy i ceny produktów (baza northwind) o cenie jednostkowej
+--pomiêdzy 20.00 a 30.00, dla ka¿dego produktu podaj dane adresowe dostawcy,
+--interesuj¹ nas tylko produkty z kategorii ‘Meat/Poultry
+SELECT ProductName, UnitPrice, Suppliers.Address FROM Products
+INNER JOIN Suppliers
+ON Products.SupplierID = Suppliers.SupplierID
+INNER JOIN Categories
+ON Categories.CategoryID = Products.CategoryID
+WHERE UnitPrice BETWEEN 20 AND 30 and CategoryName = 'Meat/Poultry'
+
+
+--6. Wybierz nazwy i ceny produktów z kategorii ‘Confections’ dla ka¿dego produktu
+--podaj nazwê dostawcy.
+SELECT ProductName, UnitPrice, Suppliers.Address FROM Products
+INNER JOIN Categories
+ON Products.CategoryID = Categories.CategoryID
+INNER JOIN Suppliers
+ON Products.SupplierID = Suppliers.SupplierID
+WHERE Categories.CategoryName = 'Confections'
+
+
+--7. Wybierz nazwy i numery telefonów klientów , którym w 1997 roku przesy³ki
+--dostarcza³a firma ‘United Package’
+SELECT Customers.CompanyName, Customers.Phone FROM Customers 
+INNER JOIN Orders
+ON Orders.CustomerID = Customers.CustomerID
+INNER JOIN Shippers
+ON Shippers.ShipperID = Orders.ShipVia
+WHERE YEAR(ShippedDate) = 1997 AND Shippers.CompanyName = 'United Package'
+
+
+--8. Wybierz nazwy i numery telefonów klientów, którzy kupowali produkty z kategorii
+--‘Confections’
+SELECT DISTINCT Customers.CompanyName, Customers.Phone FROM Customers
+INNER JOIN Orders
+ON Orders.CustomerID = Customers.CustomerID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN Products
+ON Products.ProductID = [Order Details].ProductID
+INNER JOIN Categories
+ON Categories.CategoryID = Products.CategoryID
+WHERE Categories.CategoryName = 'Confections'
+
+
+--9. Napisz polecenie, które wyœwietla pracowników oraz ich podw³adnych (baza
+--northwind)
+SELECT E.LastName, E.FirstName, E2.EmployeeID FROM Employees E
+LEFT OUTER JOIN Employees E2
+ON E2.ReportsTo=E.EmployeeID
+
+
+--10. Napisz polecenie, które wyœwietla pracowników, którzy nie maj¹ podw³adnych
+--(baza northwind)
+SELECT E.LastName, E.FirstName FROM Employees E
+LEFT OUTER JOIN Employees E2
+ON E2.ReportsTo=E.EmployeeID
+WHERE E2.EmployeeID IS NULL
+
+
+--11. Dla ka¿dego zamówienia podaj ³¹czn¹ liczbê zamówionych jednostek towaru oraz
+--nazwê klienta.
+SELECT [Order Details].OrderID, CompanyName, SUM(Quantity) FROM Customers
+INNER JOIN Orders
+ON Orders.CustomerID = Customers.CustomerID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+GROUP BY [Order Details].OrderID, CompanyName
+
+
+--12. Zmodyfikuj poprzedni przyk³ad, aby pokazaæ tylko takie zamówienia, dla których
+--³¹czna liczbê zamówionych jednostek jest wiêksza ni¿ 250
+SELECT [Order Details].OrderID, CompanyName, SUM(Quantity) FROM Customers
+INNER JOIN Orders
+ON Orders.CustomerID = Customers.CustomerID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+GROUP BY [Order Details].OrderID, CompanyName
+HAVING SUM(Quantity)>250
+
+
+--13. Dla ka¿dego zamówienia podaj ³¹czn¹ wartoœæ tego zamówienia oraz nazwê
+--klienta i  imiê i nazwisko pracownika dla zamówieñ dla których
+-- ³¹czna liczba jednostek jest wiêksza ni¿ 250.
+SELECT [Order Details].OrderID, SUM(UnitPrice*Quantity*(1-Discount)),
+CompanyName, FirstName, LastName FROM [Order Details]
+INNER JOIN Orders
+ON [Order Details].OrderID = Orders.OrderID
+INNER JOIN Customers
+ON Customers.CustomerID = Orders.CustomerID
+INNER JOIN Employees 
+ON Orders.EmployeeID = Employees.EmployeeID
+GROUP BY CompanyName, FirstName, LastName, [Order Details].OrderID
+HAVING SUM(Quantity)>250
+
+
+--14. Dla ka¿dej kategorii produktu (nazwa), podaj ³¹czn¹ liczbê zamówionych przez
+--klientów jednostek towarów z tek kategorii.
+SELECT CategoryName, SUM(Quantity) FROM Categories
+INNER JOIN Products
+ON Products.CategoryID = Categories.CategoryID
+INNER JOIN [Order Details]
+ON [Order Details].ProductID = Products.ProductID
+GROUP BY CategoryName
+
+
+--15. Dla ka¿dej kategorii produktu (nazwa), podaj ³¹czn¹ wartoœæ zamówionych przez
+--klientów jednostek towarów z tek kategorii.
+SELECT CategoryName, SUM(Quantity * (1-Discount) * [Order Details].UnitPrice) AS 'price' FROM Categories
+INNER JOIN Products
+ON Products.CategoryID = Categories.CategoryID
+INNER JOIN [Order Details]
+ON [Order Details].ProductID = Products.ProductID
+GROUP BY CategoryName
+
+
+--16. Posortuj wyniki w zapytaniu z poprzedniego punktu wg:
+--a) ³¹cznej wartoœci zamówieñ
+SELECT CategoryName, SUM(Quantity * (1-Discount) * [Order Details].UnitPrice) AS 'price' FROM Categories
+INNER JOIN Products
+ON Products.CategoryID = Categories.CategoryID
+INNER JOIN [Order Details]
+ON [Order Details].ProductID = Products.ProductID
+GROUP BY CategoryName
+ORDER BY price DESC
+
+--b) ³¹cznej liczby zamówionych przez klientów jednostek towarów.
+SELECT CategoryName, SUM(Quantity * (1-Discount) * [Order Details].UnitPrice) AS 'price' FROM Categories
+INNER JOIN Products
+ON Products.CategoryID = Categories.CategoryID
+INNER JOIN [Order Details]
+ON [Order Details].ProductID = Products.ProductID
+GROUP BY CategoryName
+ORDER BY SUM(Quantity) DESC
+
+
+--17. Dla ka¿dego zamówienia podaj jego wartoœæ uwzglêdniaj¹c op³atê za przesy³kê
+SELECT Orders.OrderID, SUM(Quantity * (1-Discount) * [Order Details].UnitPrice)+Freight AS 'price' FROM [Order Details]
+INNER JOIN Orders
+ON [Order Details].OrderID = Orders.OrderID
+GROUP BY Orders.OrderID, Freight
+
+
+--18. Dla ka¿dego przewoŸnika (nazwa) podaj liczbê zamówieñ które przewieŸli w 1997r
+SELECT CompanyName, COUNT(*) FROM Shippers
+INNER JOIN Orders
+ON Orders.ShipVia = Shippers.ShipperID
+WHERE YEAR(ShippedDate)=1997
+GROUP BY CompanyName
+
+
+--19. Który z przewoŸników by³ najaktywniejszy (przewióz³ najwiêksz¹ liczbê
+--zamówieñ) w 1997r, podaj nazwê tego przewoŸnika
+SELECT TOP 1 CompanyName FROM Shippers
+INNER JOIN Orders
+ON Orders.ShipVia = Shippers.ShipperID
+WHERE YEAR(ShippedDate)=1997
+GROUP BY CompanyName
+ORDER BY COUNT(*) DESC
+
+
+--20. Dla ka¿dego pracownika (imiê i nazwisko) podaj ³¹czn¹ wartoœæ zamówieñ
+--obs³u¿onych przez tego pracownika
+SELECT FirstName, LastName, SUM(Quantity * UnitPrice * (1-Discount)) FROM Employees
+INNER JOIN Orders
+ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+GROUP BY Employees.EmployeeID, Employees.FirstName, Employees.LastName
+
+
+--21. Który z pracowników obs³u¿y³ najwiêksz¹ liczbê zamówieñ w 1997r, podaj imiê i
+--nazwisko takiego pracownika
+SELECT TOP 1 FirstName, LastName, COUNT(*) FROM Employees
+INNER JOIN Orders
+ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+WHERE YEAR(ShippedDate) = 1997
+GROUP BY Employees.EmployeeID, Employees.FirstName, Employees.LastName
+ORDER BY COUNT(*) DESC
+
+
+--22. Który z pracowników obs³u¿y³ najaktywniejszy (obs³u¿y³ zamówienia o
+--najwiêkszej wartoœci) w 1997r, podaj imiê i nazwisko takiego pracownika
+SELECT TOP 1 FirstName, LastName, SUM(Quantity * UnitPrice * (1-Discount)) FROM Employees
+INNER JOIN Orders
+ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+WHERE YEAR(ShippedDate) = 1997
+GROUP BY Employees.EmployeeID, Employees.FirstName, Employees.LastName
+ORDER BY SUM(Quantity * UnitPrice * (1-Discount)) DESC
+
+
+--1. Dla ka¿dego pracownika (imiê i nazwisko) podaj ³¹czn¹ wartoœæ zamówieñ
+--obs³u¿onych przez tego pracownika
+--Ogranicz wynik tylko do pracowników
+
+--a) którzy maj¹ podw³adnych
+SELECT DISTINCT Employees.FirstName, Employees.LastName, SUM(Quantity * UnitPrice * (1-Discount)) FROM Employees
+INNER JOIN Orders
+ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+LEFT OUTER JOIN Employees AS E2
+ON E2.ReportsTo = Employees.EmployeeID
+WHERE E2.EmployeeID IS NOT NULL
+GROUP BY Employees.EmployeeID, Employees.FirstName, Employees.LastName, E2.EmployeeID
+
+
+--b) którzy nie maj¹ podw³adnych
+SELECT Employees.FirstName, Employees.LastName, SUM(Quantity * UnitPrice * (1-Discount)) FROM Employees
+INNER JOIN Orders
+ON Orders.EmployeeID = Employees.EmployeeID
+INNER JOIN [Order Details]
+ON [Order Details].OrderID = Orders.OrderID
+LEFT OUTER JOIN Employees AS E2
+ON E2.ReportsTo = Employees.EmployeeID
+WHERE E2.EmployeeID IS NULL
+GROUP BY Employees.EmployeeID, Employees.FirstName, Employees.LastName
