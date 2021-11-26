@@ -3,7 +3,7 @@
 SELECT ProductName, UnitPrice, Suppliers.Address FROM Products
 INNER JOIN Suppliers
 ON Products.SupplierID = Suppliers.SupplierID
-WHERE UnitPrice BETWEEN 20 AND 30
+WHERE UnitPrice BETWEEN 20 AND 30 
 
 
 --2. Wybierz nazwy produktów oraz inf. o stanie magazynu dla produktów
